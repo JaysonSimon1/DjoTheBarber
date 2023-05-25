@@ -1,4 +1,4 @@
-// ignore: file_names
+// ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -19,6 +19,7 @@ class PopUpForm extends StatefulWidget {
 
 class _PopUpFormState extends State<PopUpForm> {
   int currentStep = 0;
+
   //Variables voor kapper opties
   bool gekozenKapper1 = false;
   bool gekozenKapper2 = false;
@@ -43,6 +44,11 @@ class _PopUpFormState extends State<PopUpForm> {
     });
   }
 
+  //TextEditingControllers
+  final naam = TextEditingController();
+  final telefoon = TextEditingController();
+  final email = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +63,14 @@ class _PopUpFormState extends State<PopUpForm> {
             final isLastStep = currentStep == getSteps().length - 1;
 
             if (isLastStep) {
-              print('Completed');
+              //Afsluiten
+              Navigator.pop(context);
+            } else if (geselecteerdeKapper == '') {
+              //Checken als de eerste stap is ingevuld
+              currentStep = currentStep;
+            } else if (currentStep == 1 && geselecteerdeBehandeling == '') {
+              //Checken als de tweede stap is ingevuld
+              currentStep = currentStep;
             } else {
               setState(() {
                 currentStep += 1;
@@ -70,6 +83,8 @@ class _PopUpFormState extends State<PopUpForm> {
                     currentStep -= 1;
                   }),
           controlsBuilder: (BuildContext context, ControlsDetails controls) {
+            final isLastStep = currentStep == getSteps().length - 1;
+
             return Container(
               margin: const EdgeInsets.only(top: 50),
               child: Row(
@@ -101,9 +116,9 @@ class _PopUpFormState extends State<PopUpForm> {
                         minimumSize: const Size(50, 50),
                       ),
                       onPressed: controls.onStepContinue,
-                      child: const Text(
-                        'Volgende',
-                        style: TextStyle(
+                      child: Text(
+                        isLastStep ? 'Afpsraak Maken' : 'Volgende',
+                        style: const TextStyle(
                           fontSize: 20,
                         ),
                       ),
@@ -119,33 +134,28 @@ class _PopUpFormState extends State<PopUpForm> {
   }
 
   List<Step> getSteps() => [
-        StepOne(),
-        StepTwo(),
-        StepThree(),
-        Step(
-          state: currentStep > 3 ? StepState.complete : StepState.indexed,
-          isActive: currentStep >= 3,
-          title: const Text('Afspraak bevestigen'),
-          content: Container(),
-        ),
-        StepFive(),
+        stepOne(),
+        stepTwo(),
+        stepThree(),
+        stepFour(),
+        stepFive(),
       ];
 
   //Stap Een
-  Step StepOne() {
+  Step stepOne() {
     return Step(
       state: currentStep > 0 ? StepState.complete : StepState.indexed,
       isActive: currentStep >= 0,
-      title: const Text('Kies kapper'),
+      title: const Text(''),
       content: Column(
-        children: <Widget>[
+        children: [
           Title(
             color: Colors.black,
             child: const Text(
               'Kies kapper',
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -207,20 +217,20 @@ class _PopUpFormState extends State<PopUpForm> {
   }
 
   //Stap Twee
-  Step StepTwo() {
+  Step stepTwo() {
     return Step(
       state: currentStep > 1 ? StepState.complete : StepState.indexed,
       isActive: currentStep >= 1,
-      title: const Text('Kies behandeling'),
+      title: const Text(''),
       content: Column(
-        children: <Widget>[
+        children: [
           Title(
             color: Colors.black,
             child: const Text(
               'Kies behandeling',
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -511,39 +521,93 @@ class _PopUpFormState extends State<PopUpForm> {
   }
 
   //Stap drie
-  Step StepThree() {
+  Step stepThree() {
     return Step(
       state: currentStep > 2 ? StepState.complete : StepState.indexed,
       isActive: currentStep >= 2,
-      title: const Text('Kies datum'),
-      content: TableCalendar(
-        headerStyle:
-            const HeaderStyle(formatButtonVisible: false, titleCentered: true),
-        availableGestures: AvailableGestures.all,
-        selectedDayPredicate: (day) => isSameDay(day, selectedDay),
-        focusedDay: selectedDay,
-        firstDay: today,
-        lastDay: DateTime.utc(2030, 3, 14),
-        onDaySelected: _onDaySelected,
+      title: const Text(''),
+      content: Column(
+        children: [
+          Title(
+            color: Colors.black,
+            child: const Text(
+              'Kies datum',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          TableCalendar(
+            headerStyle: const HeaderStyle(
+                formatButtonVisible: false, titleCentered: true),
+            availableGestures: AvailableGestures.all,
+            selectedDayPredicate: (day) => isSameDay(day, selectedDay),
+            focusedDay: selectedDay,
+            firstDay: today,
+            lastDay: DateTime.utc(2030, 3, 14),
+            onDaySelected: _onDaySelected,
+          ),
+        ],
+      ),
+    );
+  }
+
+  //Stap vier
+  Step stepFour() {
+    return Step(
+      state: currentStep > 3 ? StepState.complete : StepState.indexed,
+      isActive: currentStep >= 3,
+      title: const Text(''),
+      content: Column(
+        children: [
+          Title(
+            color: Colors.black,
+            child: const Text(
+              'Afspraak bevestigen',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          TextFormField(
+            controller: naam,
+            decoration: const InputDecoration(labelText: 'Naam'),
+            validator: ((value) {
+              if (value == null || value.isEmpty) {
+                return 'Dit vak is verplicht';
+              }
+            }),
+          ),
+          TextFormField(
+            controller: telefoon,
+            decoration: const InputDecoration(labelText: 'Telefoon Nummer'),
+          ),
+          TextFormField(
+            controller: email,
+            decoration: const InputDecoration(labelText: 'E-mail Adres'),
+          )
+        ],
       ),
     );
   }
 
   //Stap vijf
-  Step StepFive() {
+  Step stepFive() {
     return Step(
       state: currentStep > 4 ? StepState.complete : StepState.indexed,
       isActive: currentStep >= 4,
-      title: const Text('Samenvatting'),
+      title: const Text(''),
       content: Column(
-        children: <Widget>[
+        children: [
           Title(
             color: Colors.black,
             child: const Text(
               'Samenvatting',
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -552,11 +616,23 @@ class _PopUpFormState extends State<PopUpForm> {
           ),
           Text(geselecteerdeKapper),
           const SizedBox(
-            height: 40,
+            height: 30,
           ),
           Text(geselecteerdeBehandeling),
           const SizedBox(
-            height: 40,
+            height: 30,
+          ),
+          Text(naam.text),
+          const SizedBox(
+            height: 30,
+          ),
+          Text(telefoon.text),
+          const SizedBox(
+            height: 30,
+          ),
+          Text(email.text),
+          const SizedBox(
+            height: 30,
           ),
           Text(selectedDay.toString().split(" ")[0])
         ],
