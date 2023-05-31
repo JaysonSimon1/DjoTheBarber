@@ -266,6 +266,9 @@ class _PopUpFormState extends State<PopUpForm> {
                     gekozenBehandeling6 = false;
                     gekozenBehandeling7 = false;
                   }
+                  if (gekozenBehandeling1 == true) {
+                    gekozenBehandeling1 = true;
+                  }
                   gekozenBehandeling1 = value!;
                   geselecteerdeBehandeling = 'Heren knipbeurt/ Haircut';
                 });
