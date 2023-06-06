@@ -1,7 +1,16 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_djothebarber/PopUpForm.dart';
 
-void main() {
+Future<void> main() async {
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyAXQ-ynRadjzk4haN_i_PLfcjz-bgI-P44",
+      appId: "1:294416703656:web:6f89a468b98a6e20d9229d",
+      messagingSenderId: "294416703656",
+      projectId: "djothebarberdatabase",
+    ),
+  );
   runApp(const MyApp());
 }
 

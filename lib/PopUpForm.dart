@@ -1,4 +1,5 @@
 // ignore_for_file: file_names
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -38,7 +39,7 @@ class _PopUpFormState extends State<PopUpForm> {
   //Variables voor de agenda
   DateTime today = DateTime.now();
   DateTime selectedDay = DateTime.now();
-  void _onDaySelected(DateTime day, DateTime focusedDay) {
+  _onDaySelected(DateTime day, DateTime focusedDay) {
     setState(() {
       selectedDay = day;
     });
@@ -63,7 +64,19 @@ class _PopUpFormState extends State<PopUpForm> {
             final isLastStep = currentStep == getSteps().length - 1;
 
             if (isLastStep) {
-              //Afsluiten
+              //Afsluiten en data versturen
+              Map<String, String> dataToSave = {
+                "Kapper": geselecteerdeKapper,
+                "Behandeling": geselecteerdeBehandeling,
+                "Datum": selectedDay.toString().split(" ")[0],
+                "Naam": naam.text,
+                "Nummer": telefoon.text,
+                "Email": email.text,
+              };
+
+              FirebaseFirestore.instance
+                  .collection('Afspraken')
+                  .add(dataToSave);
               Navigator.pop(context);
             } else if (geselecteerdeKapper == '') {
               //Checken als de eerste stap is ingevuld
@@ -178,7 +191,12 @@ class _PopUpFormState extends State<PopUpForm> {
               onChanged: (bool? value) {
                 setState(() {
                   if (gekozenKapper2 == true) gekozenKapper2 = false;
-                  gekozenKapper1 = value!;
+
+                  if (gekozenKapper1 == true) {
+                    gekozenKapper1 = true;
+                  } else {
+                    gekozenKapper1 = value!;
+                  }
                   geselecteerdeKapper = 'Djothebarber';
                 });
               },
@@ -204,7 +222,11 @@ class _PopUpFormState extends State<PopUpForm> {
               onChanged: (bool? value) {
                 setState(() {
                   if (gekozenKapper1 == true) gekozenKapper1 = false;
-                  gekozenKapper2 = value!;
+                  if (gekozenKapper2 == true) {
+                    gekozenKapper2 = true;
+                  } else {
+                    gekozenKapper2 = value!;
+                  }
                   geselecteerdeKapper = 'BarbeiroHanie';
                 });
               },
@@ -268,8 +290,9 @@ class _PopUpFormState extends State<PopUpForm> {
                   }
                   if (gekozenBehandeling1 == true) {
                     gekozenBehandeling1 = true;
+                  } else {
+                    gekozenBehandeling1 = value!;
                   }
-                  gekozenBehandeling1 = value!;
                   geselecteerdeBehandeling = 'Heren knipbeurt/ Haircut';
                 });
               },
@@ -309,9 +332,13 @@ class _PopUpFormState extends State<PopUpForm> {
                     gekozenBehandeling7 = false;
                   }
 
-                  gekozenBehandeling2 = value!;
                   geselecteerdeBehandeling =
                       'Heren knippen + baard/ Haircut + Beard';
+                  if (gekozenBehandeling2 == true) {
+                    gekozenBehandeling2 = true;
+                  } else {
+                    gekozenBehandeling2 = value!;
+                  }
                 });
               },
               secondary: const Text('€30,00'),
@@ -350,9 +377,13 @@ class _PopUpFormState extends State<PopUpForm> {
                     gekozenBehandeling7 = false;
                   }
 
-                  gekozenBehandeling3 = value!;
                   geselecteerdeBehandeling =
                       '2 personen knipbeurt/ Haircut for 2 persons';
+                  if (gekozenBehandeling3 == true) {
+                    gekozenBehandeling3 = true;
+                  } else {
+                    gekozenBehandeling3 = value!;
+                  }
                 });
               },
               secondary: const Text('€50,00'),
@@ -391,8 +422,13 @@ class _PopUpFormState extends State<PopUpForm> {
                     gekozenBehandeling7 = false;
                   }
 
-                  gekozenBehandeling4 = value!;
                   geselecteerdeBehandeling = 'Heren contouren (line up)';
+
+                  if (gekozenBehandeling4 == true) {
+                    gekozenBehandeling4 = true;
+                  } else {
+                    gekozenBehandeling4 = value!;
+                  }
                 });
               },
               secondary: const Text('€10,00'),
@@ -431,8 +467,12 @@ class _PopUpFormState extends State<PopUpForm> {
                     gekozenBehandeling7 = false;
                   }
 
-                  gekozenBehandeling5 = value!;
                   geselecteerdeBehandeling = 'Kinderen t/m 12 jaar';
+                  if (gekozenBehandeling5 == true) {
+                    gekozenBehandeling5 = true;
+                  } else {
+                    gekozenBehandeling5 = value!;
+                  }
                 });
               },
               secondary: const Text('€15,00'),
@@ -471,8 +511,12 @@ class _PopUpFormState extends State<PopUpForm> {
                     gekozenBehandeling7 = false;
                   }
 
-                  gekozenBehandeling6 = value!;
                   geselecteerdeBehandeling = 'Heren knippen + baard + wassen';
+                  if (gekozenBehandeling6 == true) {
+                    gekozenBehandeling6 = true;
+                  } else {
+                    gekozenBehandeling6 = value!;
+                  }
                 });
               },
               secondary: const Text('€35,00'),
@@ -511,8 +555,12 @@ class _PopUpFormState extends State<PopUpForm> {
                     gekozenBehandeling6 = false;
                   }
 
-                  gekozenBehandeling7 = value!;
                   geselecteerdeBehandeling = 'Heren baard/ Beard';
+                  if (gekozenBehandeling7 == true) {
+                    gekozenBehandeling7 = true;
+                  } else {
+                    gekozenBehandeling7 = value!;
+                  }
                 });
               },
               secondary: const Text('€15,00'),
@@ -577,11 +625,6 @@ class _PopUpFormState extends State<PopUpForm> {
           TextFormField(
             controller: naam,
             decoration: const InputDecoration(labelText: 'Naam'),
-            validator: ((value) {
-              if (value == null || value.isEmpty) {
-                return 'Dit vak is verplicht';
-              }
-            }),
           ),
           TextFormField(
             controller: telefoon,

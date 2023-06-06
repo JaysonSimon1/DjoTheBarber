@@ -54,5 +54,27 @@
       });
     });
   </script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-core.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics.js";
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAXQ-ynRadjzk4haN_i_PLfcjz-bgI-P44",
+    authDomain: "djothebarberdatabase.firebaseapp.com",
+    projectId: "djothebarberdatabase",
+    storageBucket: "djothebarberdatabase.appspot.com",
+    messagingSenderId: "294416703656",
+    appId: "1:294416703656:web:6f89a468b98a6e20d9229d",
+    measurementId: "G-8N5FH18F62"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 </body>
 </html>
